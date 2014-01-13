@@ -12,8 +12,16 @@ using namespace dumpable;
 string currentTestName;
 vector<pair<string,function<void()>>> allTests;
 
+bool failed = false;
+
+void setup()
+{
+    failed = false;
+}
+
 void fail(string msg)
 {
+    failed = true;
     cerr << "TEST FAIL" << endl;;
     cerr << msg << endl;
 }
@@ -91,16 +99,29 @@ IGNORED_TEST(basic_implementation)
     ASSERT_EQUAL(3, e->c);*/
 }
 
-void testmain()
+int testmain()
 {
+    bool isAnyTestFailed = false;
     for(auto it = allTests.begin(); it != allTests.end(); ++it)
     {
+        setup();
         currentTestName = it->first;
         it->second();
+        if (failed)
+        {
+            isAnyTestFailed = true;
+            cerr << "F";
+        }
+        else
+        {
+            cerr << ".";
+        }
     }
+    cerr << endl;
+    return isAnyTestFailed ? -1 : 0;
 }
 
 int main()
 {
-    testmain();
+    return testmain();
 }
