@@ -1,4 +1,4 @@
 dumpable
 ========
 
-C++ memcpy-able containers (string and vector)
+C++ memcpy-able struct and containers
