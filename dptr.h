@@ -1,9 +1,15 @@
 #pragma once
 
 #include <cstddef>
+#include <functional>
 
 namespace dumpable
 {
+    namespace detail
+    {
+        std::function<std::pair<void*, std::ptrdiff_t>(void* self, size_t size)> dptr_alloc;
+    }
+
     template <typename T>
     class dptr
     {
@@ -12,27 +18,36 @@ namespace dumpable
         public:
             dptr() : diff_(-(intptr_t)(char*)this) {}
             dptr(const dptr<T>& rhs) : diff_((char*)&*rhs - (char*)this) {}
-            T& operator* ()
+            T& operator* () const
             {
                 return *(T*)((char*)this + diff_);
             }
-            T* operator-> ()
+            T* operator-> () const
             {
                 return (T*)((char*)this + diff_);
             }
-            operator T* ()
+            operator T* () const
             {
                 return (T*)((char*)this + diff_);
             }
             dptr& operator = (T* x)
             {
-                diff_ = (char*)x - (char*)this;
+                if (x && detail::dptr_alloc)
+                {
+                    void* y;
+                    std::ptrdiff_t offset;
+                    std::tie(y, offset) = detail::dptr_alloc(this, sizeof(T));
+                    *(T*)y = *x;
+                    diff_ = offset;
+                }
+                else
+                    diff_ = (char*)x - (char*)this;
                 return *this;
             }
-            dptr& operator = (const dptr<T>& x)
+            dptr& operator = (const dptr<T>& dptr_x)
             {
-                diff_ = (char*)&*x - (char*)this;
-                return *this;
+                T* x = &*dptr_x;
+                return (*this = x);
             }
     };
 }

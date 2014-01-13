@@ -1,3 +1,5 @@
+#include <cstdio>
+
 #include <vector>
 #include <sstream>
 #include <string>
@@ -29,10 +31,12 @@ void fail(string msg)
 #define ASSERT_EQUAL(a,b) if (a != b) \
     { \
         ostringstream os; \
-        /*os << "Assert error: expected " #b " (" << b << ") but " #a " (" << a << ")";*/ \
-        os << "Assert error: expected " #b "  but " #a ; \
+        os << "Assert error: expected " #b " (" << b << ") but " #a " (" << a << ")"; \
         fail(os.str()); \
     }
+
+//*os << "Assert error: expected " #a "  but " #b ;*/ \
+
 #define TEST(x) \
     void test_##x##_();\
     struct TestAppendHelper ## x {TestAppendHelper ## x(){allTests.push_back({#x,test_##x##_});}} test_append_helper_## x; \
@@ -54,7 +58,7 @@ TEST(dptr_impl)
     n2.d = 2;
     n2.n = &n3;
     n3.d = 3;
-    ASSERT_EQUAL(nullptr, n3.n);
+    ASSERT_EQUAL(0, n3.n);
 
     int sum = 0;
     node* p = &n1;
@@ -68,7 +72,7 @@ TEST(dptr_impl)
     ASSERT_EQUAL(6, sum);
 }
 
-IGNORED_TEST(basic_implementation)
+TEST(basic_implementation)
 {
     struct embedded 
     {
@@ -86,17 +90,22 @@ IGNORED_TEST(basic_implementation)
     d.b->x = 2;
     d.c = 3;
 
-    //ostringstream os;
-    //dumpable::write(os);
+    ostringstream os;
+    dumpable::write(d, os);
 
-    /*string buffer = os.str();
+    string buffer = os.str();
 
-    dumpable::dpool::set_reading();
-    dumpable::dpool::set_pool(&buffer[0], buffer.size());
-    data* e = (data*)&buffer[0];
+    printf("%d %d\n", sizeof(data), buffer.size());
+    for(int i = 0; i < buffer.size(); i ++)
+    {
+        printf("%02X ", (unsigned char)buffer[i]);
+    }
+    printf("\n");
+
+    data* e = dumpable::from_dumped_buffer<data>(&buffer[0]);
     ASSERT_EQUAL(1, e->a);
     ASSERT_EQUAL(2, e->b->x);
-    ASSERT_EQUAL(3, e->c);*/
+    ASSERT_EQUAL(3, e->c);
 }
 
 int testmain()
