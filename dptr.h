@@ -15,6 +15,15 @@ namespace dumpable
     {
         private:
             std::ptrdiff_t diff_;
+        protected:
+            void* alloc_internal(size_t size)
+            {
+                void* ret;
+                std::ptrdiff_t offset;
+                std::tie(ret, offset) = detail::dptr_alloc(this, size);
+                diff_ = offset;
+                return ret;
+            }
         public:
             dptr() : diff_(0) {}
             dptr(const dptr<T>& rhs) : diff_((char*)&*rhs - (char*)this) {}
@@ -42,11 +51,8 @@ namespace dumpable
                     diff_ = 0;
                 else if (detail::dptr_alloc)
                 {
-                    void* y;
-                    std::ptrdiff_t offset;
-                    std::tie(y, offset) = detail::dptr_alloc(this, sizeof(T));
-                    *(T*)y = *x;
-                    diff_ = offset;
+                    void* ret = alloc_internal(sizeof(T));
+                    *(T*)ret = *x;
                 }
                 else
                     diff_ = (char*)x - (char*)this;

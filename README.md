@@ -1,4 +1,4 @@
-dumpable
+Dumpable
 ========
 
-C++ memcpy-able struct and containers
+Blazing fast C++ memcpy-able structures and containers

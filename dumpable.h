@@ -5,6 +5,8 @@
 
 #include "dptr.h"
 #include "dpool.h"
+#include "dvector.h"
+
 namespace dumpable
 {
     template <typename T>
