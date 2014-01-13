@@ -1,5 +1,3 @@
-#include <cstdio>
-
 #include <vector>
 #include <sstream>
 #include <string>
@@ -45,13 +43,16 @@ void fail(string msg)
 #define IGNORED_TEST(x) \
     void test_##x##_()
 
-TEST(dptr_impl)
+TEST(linked_list)
 {
     struct node
     {
         int d;
         dptr<node> n;
     };
+
+    // building sample linked list
+
     node n1, n2, n3;
     n1.d = 1;
     n1.n = &n2;
@@ -60,10 +61,37 @@ TEST(dptr_impl)
     n3.d = 3;
     ASSERT_EQUAL(0, n3.n);
 
+    // dptr<node> can be used as node*
+
     int sum = 0;
     node* p = &n1;
     ASSERT_EQUAL(1, p->d);
     ASSERT_EQUAL(&n2, p->n);
+    while(p)
+    {
+        sum += p->d;
+        p = p->n;
+    }
+    ASSERT_EQUAL(6, sum);
+
+    // dump linked list to stringstream
+
+    ostringstream os;
+    dumpable::write(n1, os);
+
+    // destroy original data
+    n3.d = n2.d = n1.d = -100;
+    n3.n = n2.n = n1.n = nullptr;
+
+    // read from dumped data
+
+    string buffer = os.str();
+    p = dumpable::from_dumped_buffer<node>(&buffer[0]);
+
+    // recheck data
+
+    sum = 0;
+    ASSERT_EQUAL(1, p->d);
     while(p)
     {
         sum += p->d;
@@ -94,15 +122,8 @@ TEST(basic_implementation)
     dumpable::write(d, os);
 
     string buffer = os.str();
-
-    printf("%d %d\n", sizeof(data), buffer.size());
-    for(int i = 0; i < buffer.size(); i ++)
-    {
-        printf("%02X ", (unsigned char)buffer[i]);
-    }
-    printf("\n");
-
     data* e = dumpable::from_dumped_buffer<data>(&buffer[0]);
+
     ASSERT_EQUAL(1, e->a);
     ASSERT_EQUAL(2, e->b->x);
     ASSERT_EQUAL(3, e->c);
