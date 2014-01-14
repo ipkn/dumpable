@@ -27,19 +27,19 @@ namespace dumpable
         public:
             dptr() : diff_(0) {}
             dptr(const dptr<T>& rhs) : diff_((char*)&*rhs - (char*)this) {}
-            T& operator* () const
+            T& operator* () const noexcept
             {
                 if (diff_ == 0)
                     return *(T*)nullptr;
                 return *(T*)((char*)this + diff_);
             }
-            T* operator-> () const
+            T* operator-> () const noexcept
             {
                 if (diff_ == 0)
                     return (T*)nullptr;
                 return (T*)((char*)this + diff_);
             }
-            operator T* () const
+            operator T* () const noexcept
             {
                 if (diff_ == 0)
                     return (T*)nullptr;

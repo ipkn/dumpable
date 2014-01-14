@@ -100,27 +100,27 @@ TEST(linked_list)
     ASSERT_EQUAL(6, sum);
 }
 
-TEST(vector)
+TEST(vector_and_string)
 {
     struct student
     {
-        int student_id;
+        dwstring name;
         int score;
         student(){}
-        student(int student_id, int score) : student_id(student_id), score(score) {}
+        student(const wstring& name, int score) : name(name), score(score) {}
     };
     struct classroom
     {
-        int class_id;
+        dstring class_name;
         dvector<student> students;
     };
 
     vector<student> testData;
-    testData.push_back(student(1,2));
-    testData.push_back(student(3,5));
-    testData.push_back(student(8,13));
+    testData.push_back(student(L"Alice",2));
+    testData.push_back(student(L"Bob",5));
+    testData.push_back(student(L"\ud55c\uae00",13));
     classroom c;
-    c.class_id = 1001;
+    c.class_name = "1001";
     c.students = testData;
 
     ostringstream os;
@@ -131,12 +131,12 @@ TEST(vector)
     string buffer = os.str();
     classroom* c2 = dumpable::from_dumped_buffer<classroom>(&buffer[0]);
 
-    ASSERT_EQUAL(1001, c2->class_id);
-    ASSERT_EQUAL(1, c2->students[0].student_id);
+    ASSERT_EQUAL("1001", c2->class_name);
+    ASSERT_EQUAL(L"Alice", c2->students[0].name);
     ASSERT_EQUAL(2, c2->students[0].score);
-    ASSERT_EQUAL(3, c2->students[1].student_id);
+    ASSERT_EQUAL(L"Bob", c2->students[1].name);
     ASSERT_EQUAL(5, c2->students[1].score);
-    ASSERT_EQUAL(8, c2->students[2].student_id);
+    ASSERT_EQUAL(L"\ud55c\uae00", c2->students[2].name);
     ASSERT_EQUAL(13, c2->students[2].score);
 }
 

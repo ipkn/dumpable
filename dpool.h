@@ -33,7 +33,7 @@ namespace dumpable
                 poolSize_ += size;
                 void* allocatedAddress = &pool_.back()[0];
                 poolOffsets_.insert(std::make_pair(allocatedAddress, -poolSize_));
-                auto it = poolOffsets_.lower_bound(self);
+                auto it = poolOffsets_.upper_bound(self);
                 --it;
                 std::ptrdiff_t diff = (char*)self - (char*)it->first;
                 return std::make_pair(allocatedAddress, -poolSize_-it->second-diff);

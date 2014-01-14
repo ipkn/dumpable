@@ -1,0 +1,28 @@
+
+Output layout of dumpable::write:
+
+(start poistion of user data) (dumpable::dpool) (user data)
+
+For pointer types, the relative position from the address of pointer value itself is stored.
+
+Example:
+
+#pragma pack(push, 1)
+struct node
+{
+    int d;
+    node* n;
+};
+#pragma pack(pop)
+
+node n1: d=1, n=n2
+node n2: d=2, n=n3
+node n3: d=3, n=nullptr
+
+dumpable::write(n1) ->
+
+size	8		4	8		4	8		4	8
+value	4+8+4+8	3	nullptr	2	-4-8-4	1	-4-8-4
+(assumes sizeof(T*) == 8)
+
+

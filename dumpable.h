@@ -6,6 +6,7 @@
 #include "dptr.h"
 #include "dpool.h"
 #include "dvector.h"
+#include "dstring.h"
 
 namespace dumpable
 {
