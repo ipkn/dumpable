@@ -1,5 +1,9 @@
 #pragma once
 
+#if defined(_MSC_VER) && !defined(noexcept)
+#define noexcept throw()
+#endif
+
 #include <cstddef>
 #include <functional>
 
@@ -27,6 +31,10 @@ namespace dumpable
         public:
             dptr() : diff_(0) {}
             dptr(const dptr<T>& rhs) : diff_((char*)&*rhs - (char*)this) {}
+            dptr(dptr<T>&& rhs) noexcept : diff_((char*)&*rhs - (char*)this) 
+            {
+                rhs = nullptr;
+            }
             T& operator* () const noexcept
             {
                 if (diff_ == 0)
@@ -63,6 +71,14 @@ namespace dumpable
                 if (&dptr_x == this)
                     return *this;
                 T* x = &*dptr_x;
+                return (*this = x);
+            }
+            dptr& operator = (dptr<T>&& dptr_x) noexcept
+            {
+                if (&dptr_x == this)
+                    return *this;
+                T* x = &*dptr_x;
+                dptr_x = nullptr;
                 return (*this = x);
             }
     };

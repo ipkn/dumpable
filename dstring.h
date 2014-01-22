@@ -28,122 +28,142 @@ namespace dumpable
                     Traits::copy((T*)*this, begin, size+1);
                 }
             }
-    public:
-        dbasic_string() {}
-        dbasic_string(T* str)
-        {
-            size_t length = Traits::length(str);
-            assign(str, length);
-        }
-        dbasic_string(const std::basic_string<T, Traits>& s)
-        {
-            assign(s.c_str(), s.size());
-        }
-        dbasic_string(const dbasic_string<T, Traits>& s)
-        {
-            assign(s.c_str(), s.size());
-        }
-        ~dbasic_string()
-        {
-            clear();
-        }
-
-        void clear()
-        {
-            T* begin = (T*)*this;
-            if (!isPooled_ && begin)
+        public:
+            dbasic_string() {}
+            dbasic_string(const T* str)
             {
-                delete[] begin;
+                size_t length = Traits::length(str);
+                assign(str, length);
             }
-            dptr<T>::operator =(nullptr);
-            size_ = 0;
-            isPooled_ = false;
-        }
-        T* begin() const noexcept { return (T*)*this; }
-        T* end() const noexcept { return begin() + size(); }
+            dbasic_string(const std::basic_string<T, Traits>& s)
+            {
+                assign(s.c_str(), s.size());
+            }
+            dbasic_string(const dbasic_string<T, Traits>& s)
+            {
+                assign(s.c_str(), s.size());
+            }
+            dbasic_string(dbasic_string<T, Traits>&& s) noexcept
+                : size_(s.size_), isPooled_(s.isPooled_), dptr<T>(std::move(s))
+                {
+                    s.size_ = 0;
+                    s.isPooled_ = false;
+                }
+            ~dbasic_string()
+            {
+                clear();
+            }
 
-        const T* c_str() const noexcept
-        {
-            return data();
-        }
+            void clear()
+            {
+                T* begin = (T*)*this;
+                if (!isPooled_ && begin)
+                {
+                    delete[] begin;
+                }
+                dptr<T>::operator =(nullptr);
+                size_ = 0;
+                isPooled_ = false;
+            }
+            T* begin() const noexcept { return (T*)*this; }
+            T* end() const noexcept { return begin() + size(); }
 
-        const T* data() const noexcept  
-        { 
-            if (empty())
-                return (T*)"\x00\x00\x00\x00";
-            return (T*)*this; 
-        }
+            const T* c_str() const noexcept
+            {
+                return data();
+            }
 
-        T& operator[](size_t index) const noexcept { return *(begin() + index); }
-        size_t size() const noexcept { return size_; }
-        bool empty() const noexcept { return !size_; }
-        T& front() const noexcept { return *begin(); }
-        T& back() const noexcept { return *(end()-1); }
+            const T* data() const noexcept  
+            { 
+                if (empty())
+                    return (T*)"\x00\x00\x00\x00";
+                return (T*)*this; 
+            }
 
-        friend std::ostream& operator << (std::ostream& os, const dbasic_string<T, Traits>& str)
-        {
-            os << str.c_str(); 
-        }
+            T& operator[](int index) const noexcept { return *(begin() + index); }
+            size_t size() const noexcept { return size_; }
+            bool empty() const noexcept { return !size_; }
+            T& front() const noexcept { return *begin(); }
+            T& back() const noexcept { return *(end()-1); }
 
-        friend bool operator == (const dbasic_string<T, Traits>& a, const dbasic_string<T, Traits>& b)
-        {
-            if (a.size() != b.size())
-                return false;
-            if (a.c_str() == b.c_str())
-                return true;
-            return !Traits::compare(a.c_str(), b.c_str(), a.size()+1);
-        }
+            friend std::ostream& operator << (std::ostream& os, const dbasic_string<T, Traits>& str)
+            {
+                os << str.c_str(); 
+            }
 
-        friend bool operator != (const dbasic_string<T, Traits>& a, const dbasic_string<T, Traits>& b)
-        {
-            return !(a==b);
-        }
+            friend bool operator == (const dbasic_string<T, Traits>& a, const dbasic_string<T, Traits>& b)
+            {
+                if (a.size() != b.size())
+                    return false;
+                if (a.c_str() == b.c_str())
+                    return true;
+                return !Traits::compare(a.c_str(), b.c_str(), a.size()+1);
+            }
 
-        friend bool operator == (const dbasic_string<T, Traits>& a, const T* b)
-        {
-            size_t length = Traits::length(b);
-            if (length != a.size())
-                return false;
-            return !Traits::compare(b, a.c_str(), a.size()+1);
-        }
+            friend bool operator != (const dbasic_string<T, Traits>& a, const dbasic_string<T, Traits>& b)
+            {
+                return !(a==b);
+            }
 
-        friend bool operator != (const dbasic_string<T, Traits>& a, const T* b)
-        {
-            return !(a==b);
-        }
+            friend bool operator == (const dbasic_string<T, Traits>& a, const T* b)
+            {
+                size_t length = Traits::length(b);
+                if (length != a.size())
+                    return false;
+                return !Traits::compare(b, a.c_str(), a.size()+1);
+            }
 
-        friend bool operator == (const T* a, const dbasic_string<T, Traits>& b)
-        {
-            size_t length = Traits::length(a);
-            if (length != b.size())
-                return false;
-            return !Traits::compare(a, b.c_str(), b.size()+1);
-        }
+            friend bool operator != (const dbasic_string<T, Traits>& a, const T* b)
+            {
+                return !(a==b);
+            }
 
-        friend bool operator != (const T* a, const dbasic_string<T, Traits>& b)
-        {
-            return !(a==b);
-        }
+            friend bool operator == (const T* a, const dbasic_string<T, Traits>& b)
+            {
+                size_t length = Traits::length(a);
+                if (length != b.size())
+                    return false;
+                return !Traits::compare(a, b.c_str(), b.size()+1);
+            }
 
-    public:
-        dbasic_string<T, Traits>& operator = (const T* str)
-        {
-            clear();
-            size_t length = Traits::length(str);
-            assign(str, length);
-        }
-        dbasic_string<T, Traits>& operator = (const std::basic_string<T, Traits>& v)
-        {
-            clear();
-            assign(v.c_str(), v.size());
-            return *this;
-        }
-        dbasic_string<T, Traits>& operator = (const dbasic_string<T, Traits>& v)
-        {
-            clear();
-            assign(v.c_str(), v.size());
-            return *this;
-        }
+            friend bool operator != (const T* a, const dbasic_string<T, Traits>& b)
+            {
+                return !(a==b);
+            }
+
+        public:
+            dbasic_string<T, Traits>& operator = (const T* str)
+            {
+                clear();
+                size_t length = Traits::length(str);
+                assign(str, length);
+            }
+            dbasic_string<T, Traits>& operator = (const std::basic_string<T, Traits>& s)
+            {
+                clear();
+                assign(s.c_str(), s.size());
+                return *this;
+            }
+            dbasic_string<T, Traits>& operator = (const dbasic_string<T, Traits>& s)
+            {
+                clear();
+                assign(s.c_str(), s.size());
+                return *this;
+            }
+            dbasic_string<T, Traits>& operator = (dbasic_string<T, Traits>&& s)
+            {
+                if (&s == this)
+                    return *this;
+                size_ = s.size_;
+                isPooled_ = s.isPooled_;
+
+                dptr<T>::operator =(std::move(s));
+
+                s.size_ = 0;
+                s.isPooled_ = false;
+
+                return *this;
+            }
         private:
             size_t size_;
             char isPooled_;

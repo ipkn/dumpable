@@ -37,7 +37,7 @@ void fail(string msg)
 
 #define TEST(x) \
     void test_##x##_();\
-    struct TestAppendHelper ## x {TestAppendHelper ## x(){allTests.push_back({#x,test_##x##_});}} test_append_helper_## x; \
+    struct TestAppendHelper ## x {TestAppendHelper ## x(){allTests.push_back(pair<string,function<void()>>(#x,test_##x##_));}} test_append_helper_## x; \
     void test_##x##_()
 
 #define IGNORED_TEST(x) \
@@ -100,6 +100,54 @@ TEST(linked_list)
     ASSERT_EQUAL(6, sum);
 }
 
+TEST(map)
+{
+    map<int, dstring> original;
+    original.insert(make_pair(1, "one"));
+    original.insert(make_pair(2, "two"));
+    original.insert(make_pair(5, "five"));
+
+    dmap<int, dstring> data2(original);
+    dmap<int, dstring> data = std::move(data2);
+
+    ASSERT_EQUAL(0, data2.size());
+    ASSERT_EQUAL(0, data2.count(1));
+
+    ASSERT_EQUAL("one", data.find(1)->second);
+    ASSERT_EQUAL("two", data.find(2)->second);
+    ASSERT_EQUAL("five", data.find(5)->second);
+
+    ASSERT_EQUAL(0, data.count(3));
+    ASSERT_EQUAL(1, data.count(1));
+    ASSERT_EQUAL(3, data.size());
+
+    ostringstream os;
+    dumpable::write(data, os);
+
+    data.clear();
+    ASSERT_EQUAL(0, data.count(1));
+    ASSERT_EQUAL(0, data.count(2));
+    ASSERT_EQUAL(0, data.count(5));
+    ASSERT_EQUAL(0, data.size());
+
+
+    string buffer = os.str();
+    decltype(data)* p = dumpable::from_dumped_buffer<decltype(data)>(&buffer[0]);
+
+    
+    {
+        dmap<int, dstring>& data = *p;
+        ASSERT_EQUAL("one", data.find(1)->second);
+        ASSERT_EQUAL("two", data.find(2)->second);
+        ASSERT_EQUAL("five", data.find(5)->second);
+
+        ASSERT_EQUAL(0, data.count(3));
+        ASSERT_EQUAL(1, data.count(1));
+        ASSERT_EQUAL(3, data.size());
+    }
+
+}
+
 TEST(vector_and_string)
 {
     struct student
@@ -122,6 +170,10 @@ TEST(vector_and_string)
     classroom c;
     c.class_name = "1001";
     c.students = testData;
+    {
+        dvector<student> move_test(testData);
+        c.students = std::move(move_test);
+    }
 
     ostringstream os;
     dumpable::write(c, os);
@@ -138,6 +190,15 @@ TEST(vector_and_string)
     ASSERT_EQUAL(5, c2->students[1].score);
     ASSERT_EQUAL(L"\ud55c\uae00", c2->students[2].name);
     ASSERT_EQUAL(13, c2->students[2].score);
+
+    classroom x = std::move(*c2);
+    ASSERT_EQUAL("1001", x.class_name);
+    ASSERT_EQUAL(L"Alice", x.students[0].name);
+    ASSERT_EQUAL(2, x.students[0].score);
+    ASSERT_EQUAL(L"Bob", x.students[1].name);
+    ASSERT_EQUAL(5, x.students[1].score);
+    ASSERT_EQUAL(L"\ud55c\uae00", x.students[2].name);
+    ASSERT_EQUAL(13, x.students[2].score);
 }
 
 TEST(basic_implementation)

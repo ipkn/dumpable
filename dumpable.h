@@ -1,5 +1,9 @@
 #pragma once
 
+#if defined(_MSC_VER) && !defined(noexcept)
+#define noexcept throw()
+#endif
+
 #include <iostream> 
 #include <cstddef>
 
@@ -7,9 +11,17 @@
 #include "dpool.h"
 #include "dvector.h"
 #include "dstring.h"
+#include "dmap.h"
 
 namespace dumpable
 {
+    template <typename T>
+    const T* from_dumped_buffer(const void* buffer)
+    {
+        std::ptrdiff_t offsetOfData = *(std::ptrdiff_t*)buffer;
+        return (T*)((char*)buffer+offsetOfData+sizeof(offsetOfData));
+    }
+
     template <typename T>
     T* from_dumped_buffer(void* buffer)
     {
