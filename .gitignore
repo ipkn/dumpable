@@ -14,3 +14,8 @@
 
 # Compiled binary
 test
+test.obj
+test.exe
+
+*.swp
+*~
