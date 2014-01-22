@@ -44,7 +44,7 @@ namespace dumpable
                 assign(s.c_str(), s.size());
             }
             dbasic_string(dbasic_string<T, Traits>&& s) noexcept
-                : size_(s.size_), isPooled_(s.isPooled_), dptr<T>(std::move(s))
+                : dptr<T>(std::move(s)), size_(s.size_), isPooled_(s.isPooled_)
                 {
                     s.size_ = 0;
                     s.isPooled_ = false;
@@ -89,6 +89,7 @@ namespace dumpable
             friend std::ostream& operator << (std::ostream& os, const dbasic_string<T, Traits>& str)
             {
                 os << str.c_str(); 
+                return os;
             }
 
             friend bool operator == (const dbasic_string<T, Traits>& a, const dbasic_string<T, Traits>& b)
@@ -137,13 +138,16 @@ namespace dumpable
                 clear();
                 size_t length = Traits::length(str);
                 assign(str, length);
+                return *this;
             }
+
             dbasic_string<T, Traits>& operator = (const std::basic_string<T, Traits>& s)
             {
                 clear();
                 assign(s.c_str(), s.size());
                 return *this;
             }
+
             dbasic_string<T, Traits>& operator = (const dbasic_string<T, Traits>& s)
             {
                 clear();

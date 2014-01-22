@@ -27,7 +27,7 @@ namespace dumpable
                 }
             }
         public:
-            dvector() : isPooled_(false), size_(0) {}
+            dvector() : size_(0), isPooled_(false) {}
             dvector(const std::vector<T>& v)
             { 
                 assign(v.data(), v.size());
@@ -46,7 +46,7 @@ namespace dumpable
             }
 
             dvector(dvector<T>&& v) noexcept
-                : size_(v.size_), isPooled_(v.isPooled_), dptr<T>(std::move(v))
+                : dptr<T>(std::move(v)), size_(v.size_), isPooled_(v.isPooled_)
             {
                 v.size_ = 0;
                 v.isPooled_ = false;

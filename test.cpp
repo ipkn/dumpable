@@ -33,8 +33,6 @@ void fail(string msg)
         fail(os.str()); \
     }
 
-//*os << "Assert error: expected " #a "  but " #b ;*/ \
-
 #define TEST(x) \
     void test_##x##_();\
     struct TestAppendHelper ## x {TestAppendHelper ## x(){allTests.push_back(pair<string,function<void()>>(#x,test_##x##_));}} test_append_helper_## x; \
