@@ -1,3 +1,6 @@
+// Copyright (c) 2014 ipkn.
+// Licensed under the MIT license.
+
 #pragma once
 
 #include <map>

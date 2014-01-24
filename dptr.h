@@ -1,3 +1,6 @@
+// Copyright (c) 2014 ipkn.
+// Licensed under the MIT license.
+
 #pragma once
 
 #if defined(_MSC_VER) && !defined(noexcept)
