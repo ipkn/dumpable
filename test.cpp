@@ -33,6 +33,13 @@ void fail(string msg)
         fail(os.str()); \
     }
 
+#define ASSERT_NOT_EQUAL(a,b) if (a == b) \
+    { \
+        ostringstream os; \
+        os << "Assert error: not expected " #b " (" << b << ") but " #a " (" << a << ")"; \
+        fail(os.str()); \
+    }
+
 #define TEST(x) \
     void test_##x##_();\
     struct TestAppendHelper ## x {TestAppendHelper ## x(){allTests.push_back(pair<string,function<void()>>(#x,test_##x##_));}} test_append_helper_## x; \
@@ -98,6 +105,67 @@ TEST(linked_list)
     ASSERT_EQUAL(6, sum);
 }
 
+TEST(string)
+{
+    dstring dumpable_empty("");
+    string stl_empty("");
+
+    ASSERT_EQUAL(dumpable_empty, stl_empty);
+    ASSERT_NOT_EQUAL(dumpable_empty, "Hello World");
+    ASSERT_EQUAL(dumpable_empty, "");
+    ASSERT_NOT_EQUAL("Hello World", dumpable_empty);
+    ASSERT_EQUAL("", dumpable_empty);
+
+    dstring dumpable_abc("abc");
+    dstring dumpable_abc2("abc");
+    string stl_abc("abc");
+    dstring dumpable_def("def");
+    string stl_def("def");
+
+    ASSERT_EQUAL(dumpable_abc,dumpable_abc);
+    dumpable_abc = dumpable_abc;
+    ASSERT_EQUAL(dumpable_abc,dumpable_abc);
+    dumpable_abc = std::move(dumpable_abc);
+    ASSERT_EQUAL(dumpable_abc,dumpable_abc);
+    ASSERT_EQUAL(dumpable_abc,dstring("abc"));
+    ASSERT_NOT_EQUAL(dumpable_abc,dstring("abcd"));
+    ASSERT_EQUAL(dumpable_abc,dumpable_abc2);
+    ASSERT_EQUAL(dumpable_abc,stl_abc);
+    ASSERT_EQUAL(dumpable_def,stl_def);
+    ASSERT_EQUAL(dumpable_abc2, dumpable_abc);
+    ASSERT_EQUAL(stl_abc, dumpable_abc);
+    ASSERT_EQUAL(stl_def, dumpable_def);
+
+    ASSERT_NOT_EQUAL(dumpable_abc,stl_def);
+    ASSERT_NOT_EQUAL(dumpable_def,stl_abc);
+
+    ASSERT_NOT_EQUAL(dumpable_abc,string("abcd"));
+    ASSERT_NOT_EQUAL(string("efgh"),dumpable_def);
+
+    dstring moved_abc(std::move(dumpable_abc2));
+    ASSERT_EQUAL(moved_abc, dumpable_abc);
+    ASSERT_EQUAL(0, dumpable_abc2.size());
+
+    dstring moved_abc2;
+    moved_abc2 = std::move(moved_abc);
+    ASSERT_EQUAL(moved_abc2, dumpable_abc);
+    ASSERT_EQUAL(0, moved_abc.size());
+
+    string testAppend;
+    for(auto it = dumpable_abc.begin(); it != dumpable_abc.end(); ++it)
+    {
+        testAppend += *it;
+    }
+    ASSERT_EQUAL(testAppend, dumpable_abc);
+    ASSERT_EQUAL('a', dumpable_abc.front());
+    ASSERT_EQUAL('c', dumpable_abc.back());
+
+    ostringstream os;
+    os << dumpable_abc;
+    ASSERT_EQUAL(os.str(), dumpable_abc);
+    ASSERT_EQUAL(os.str().c_str(), dumpable_abc);
+}
+
 TEST(map)
 {
     map<int, dstring> original;
@@ -148,10 +216,14 @@ TEST(map)
 
 TEST(vector_and_string)
 {
+    struct empty_struct_for_test {};
     struct student
     {
+        empty_struct_for_test x1;
         dwstring name;
+        empty_struct_for_test x2;
         int score;
+        empty_struct_for_test x3;
         student(){}
         student(const wstring& name, int score) : name(name), score(score) {}
     };

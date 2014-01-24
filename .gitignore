@@ -19,3 +19,8 @@ test.exe
 
 *.swp
 *~
+
+# test coverage
+*.gcov
+test.gcda
+test.gcno
