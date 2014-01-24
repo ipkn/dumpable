@@ -135,7 +135,7 @@ namespace dumpable
     typedef dbasic_string<char> dstring;
     typedef dbasic_string<wchar_t> dwstring;
 
-    template <typename T, typename Traits = std::char_traits<T>>
+    template <typename T, typename Traits>
     inline bool operator == (const dbasic_string<T, Traits>& a, const T* b)
     {
         size_t length = Traits::length(b);
@@ -144,7 +144,7 @@ namespace dumpable
         return !Traits::compare(b, a.c_str(), a.size()+1);
     }
 
-    template <typename T, typename Traits = std::char_traits<T>>
+    template <typename T, typename Traits>
     inline bool operator == (const T* a, const dbasic_string<T, Traits>& b)
     {
         size_t length = Traits::length(a);
@@ -153,14 +153,14 @@ namespace dumpable
         return !Traits::compare(a, b.c_str(), b.size()+1);
     }
 
-    template <typename T, typename Traits = std::char_traits<T>>
+    template <typename T, typename Traits>
     inline std::ostream& operator << (std::ostream& os, const dbasic_string<T, Traits>& str)
     {
         os << str.c_str(); 
         return os;
     }
 
-    template <typename T, typename Traits = std::char_traits<T>>
+    template <typename T, typename Traits>
     bool operator == (const dbasic_string<T, Traits>& a, const dbasic_string<T, Traits>& b)
     {
         if (a.size() != b.size())
@@ -170,7 +170,7 @@ namespace dumpable
         return !Traits::compare(a.c_str(), b.c_str(), a.size()+1);
     }
 
-    template <typename T, typename Traits = std::char_traits<T>>
+    template <typename T, typename Traits>
     bool operator == (const std::basic_string<T, Traits>& a, const dbasic_string<T, Traits>& b)
     {
         if (a.size() != b.size())
@@ -178,7 +178,7 @@ namespace dumpable
         return !Traits::compare(a.c_str(), b.c_str(), a.size()+1);
     }
 
-    template <typename T, typename Traits = std::char_traits<T>>
+    template <typename T, typename Traits>
     bool operator == (const dbasic_string<T, Traits>& a, const std::basic_string<T, Traits>& b)
     {
         if (a.size() != b.size())
@@ -186,31 +186,31 @@ namespace dumpable
         return !Traits::compare(a.c_str(), b.c_str(), a.size()+1);
     }
 
-    template <typename T, typename Traits = std::char_traits<T>>
+    template <typename T, typename Traits>
     inline bool operator != (const dbasic_string<T, Traits>& a, const dbasic_string<T, Traits>& b)
     {
         return !(a==b);
     }
 
-    template <typename T, typename Traits = std::char_traits<T>>
+    template <typename T, typename Traits>
     inline bool operator != (const dbasic_string<T, Traits>& a, const std::basic_string<T, Traits>& b)
     {
         return !(a==b);
     }
 
-    template <typename T, typename Traits = std::char_traits<T>>
+    template <typename T, typename Traits>
     inline bool operator != (const std::basic_string<T, Traits>& a, const dbasic_string<T, Traits>& b)
     {
         return !(a==b);
     }
 
-    template <typename T, typename Traits = std::char_traits<T>>
+    template <typename T, typename Traits>
     inline bool operator != (const dbasic_string<T, Traits>& a, const T* b)
     {
         return !(a==b);
     }
 
-    template <typename T, typename Traits = std::char_traits<T>>
+    template <typename T, typename Traits>
     inline bool operator != (const T* a, const dbasic_string<T, Traits>& b)
     {
         return !(a==b);
