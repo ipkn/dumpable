@@ -105,6 +105,28 @@ TEST(linked_list)
     ASSERT_EQUAL(6, sum);
 }
 
+TEST(vector)
+{
+    vector<int> v;
+    dvector<int> v2, v3;
+    v.push_back(100);
+    v.push_back(300);
+    v.push_back(200);
+    v2 = v;
+    v2 = v2;
+    v3 = v2;
+    ASSERT_EQUAL(3, v3.size());
+    ASSERT_EQUAL(300, v3[1]);
+    v3.clear();
+    ASSERT_EQUAL(0, v3.size());
+    v2 = std::move(v2);
+    ASSERT_EQUAL(3, v2.size());
+    v3 = std::move(v2);
+    ASSERT_EQUAL(3, v3.size());
+    ASSERT_EQUAL(0, v2.size());
+    ASSERT_EQUAL(300, v3[1]);
+}
+
 TEST(string)
 {
     dstring dumpable_empty("");

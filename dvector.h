@@ -89,6 +89,8 @@ namespace dumpable
             }
             dvector<T>& operator = (const dvector<T>& v)
             {
+                if (&v == this)
+                    return *this;
                 clear();
                 assign(v.data(), v.size());
                 return *this;
