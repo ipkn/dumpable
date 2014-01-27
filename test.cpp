@@ -12,6 +12,10 @@ using namespace dumpable;
 string currentTestName;
 vector<pair<string,function<void()>>> allTests;
 
+template class dvector<int>;
+template class dmap<int, int>;
+template class dbasic_string<char>;
+
 bool failed = false;
 
 void setup()
@@ -56,12 +60,14 @@ TEST(simple_example)
     {
         dwstring name;
         int score;
+        dvector<int> emptyVectorForTest;
         student(){}
         student(const wstring& name, int score) : name(name), score(score) {}
     };
 
     struct classroom
     {
+        dvector<int> emptyVectorForTest;
         dstring class_name;
         dvector<student> students;
     };
@@ -177,9 +183,19 @@ TEST(vector)
     v.push_back(100);
     v.push_back(300);
     v.push_back(200);
+    ASSERT_EQUAL(100, v.front());
+    ASSERT_EQUAL(200, v.back());
     v2 = v;
     v2 = v2;
     v3 = v2;
+    dvector<int> v4(v2);
+    ASSERT_EQUAL(100, v4.front());
+    ASSERT_EQUAL(200, v4.back());
+    ASSERT_EQUAL(3, v4.size());
+    ASSERT_EQUAL(false, v4.empty());
+    v4.resize(0);
+    ASSERT_EQUAL(true, v4.empty());
+
     ASSERT_EQUAL(3, v3.size());
     ASSERT_EQUAL(300, v3[1]);
     v3.clear();
@@ -190,6 +206,34 @@ TEST(vector)
     ASSERT_EQUAL(3, v3.size());
     ASSERT_EQUAL(0, v2.size());
     ASSERT_EQUAL(300, v3[1]);
+    int sum = 0;
+    for(auto it = begin(v3); it != end(v3); ++it)
+        sum += *it;
+    ASSERT_EQUAL(600, sum);
+    for(int i = 0; i < 20; i ++)
+        v3.push_back(10);
+    int x = 2000;
+    v3.push_back(x);
+    sum = 0;
+    for(auto it = v3.cbegin(); it != v3.cend(); ++it)
+        sum += *it;
+    ASSERT_EQUAL(2800, sum);
+    v3.resize(3);
+    sum = 0;
+    for(auto it = v3.cbegin(); it != v3.cend(); ++it)
+        sum += *it;
+    ASSERT_EQUAL(600, sum);
+    v3.resize(200);
+    ASSERT_EQUAL(100, v3.front());
+    ASSERT_EQUAL(0, v3.back());
+    v3.push_back(1000);
+    ASSERT_EQUAL(1000, v3.back());
+    sum = 0;
+    for(auto it = v3.cbegin(); it != v3.cend(); ++it)
+        sum += *it;
+    ASSERT_EQUAL(1600, sum);
+    ASSERT_EQUAL(0, v3[3]);
+    ASSERT_EQUAL(0, v3[4]);
 }
 
 TEST(string)

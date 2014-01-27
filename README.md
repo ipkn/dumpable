@@ -69,9 +69,25 @@ Extracted from **simple\_example** (test.cpp)
       chunk.clear();
       // now pClassRom is now invalid.
       ```
-      Note: **from\_dumped\_buffer** takes constant time.
+      Note: **dumpable::from\_dumped\_buffer** takes constant time.
       
 See **simple\_example** from test.cpp for more detail.
+
+Thready Safety
+--------------
+
+Only one thread can call **dumpable::write**. (It uses global variable.)  
+**dumpable::from\_dumped\_buffer** is thread-safe.
+
+Limitation
+----------
+
+You cannot use **dumpable** with virtual functions.  
+Modifying **dumpable** containers is slow.
+
+Currently only few member functions are implemented. 
+
+<!--**dmap::insert** is O(N) time operation.-->
 
 Installation
 ------------
