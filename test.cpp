@@ -74,17 +74,11 @@ TEST(simple_example)
 
     // building sample data
 
-    vector<student> testData;
-    testData.push_back(student(L"Alice",2));
-    testData.push_back(student(L"Bob",5));
-    testData.push_back(student(L"\ud55c\uae00",13));
     classroom c;
     c.class_name = "1001";
-    c.students = testData;
-    {
-        dvector<student> move_test(testData);
-        c.students = std::move(move_test);
-    }
+    c.students.push_back(student(L"Alice",2));
+    c.students.push_back(student(L"Bob",5));
+    c.students.push_back(student(L"\ud55c\uae00",13));
 
     // Dump to stringstream
     // NOTE: No need to write serialization code for struct student and struct classroom.
@@ -198,6 +192,7 @@ TEST(vector)
 
     ASSERT_EQUAL(3, v3.size());
     ASSERT_EQUAL(300, v3[1]);
+    ASSERT_EQUAL(300, v3.at(1));
     v3.clear();
     ASSERT_EQUAL(0, v3.size());
     v2 = std::move(v2);

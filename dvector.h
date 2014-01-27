@@ -14,6 +14,8 @@ namespace dumpable
         template <typename T>
         T find_power_of_2_greater_than(T n)
         {
+            if (n==0)
+                return 0;
             n += (n==0);
             n--;
             n|=n>>1;
@@ -68,7 +70,7 @@ namespace dumpable
                 size_type newCapacity = detail::find_power_of_2_greater_than(newSize);
                 if (oldCapacity != newCapacity)
                 {
-                    T* newBuffer = new T[newCapacity];
+                    T* newBuffer = newCapacity ? new T[newCapacity] : nullptr;
                     T* oldBuffer = (T*)*this;
                     for(size_type i = 0; i < std::min(size_, newCapacity); i ++)
                     {
