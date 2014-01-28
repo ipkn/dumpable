@@ -3,7 +3,7 @@ Dumpable - C++ memcpy-able containers
 
 What is it?
 -----------
-**Dumpable** is a set of containers that can be reconstructed from buffer in constant time.
+**Dumpable** is a set of containers that can be reconstructed from buffer in constant time.  
 It can be used in combination with POD types and structures.  
 You don't need to write serialization code for your struct; it just works magically!
 
