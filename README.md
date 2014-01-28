@@ -6,9 +6,8 @@ What is it?
 
 With **dumpable**, you could..
 
-  * serialize your custom *dumpable* struct
-  * deserialize in constant time
-  * without extra code for serialize/deserialize
+  * serialize your custom *dumpable* struct **without any extra code** for serialize/deserialize
+  * deserialize in **constant time**
 
 *dumpable* struct is a struct that contains only members with following types: 
   * POD
