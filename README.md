@@ -1,4 +1,4 @@
-dumpable - C++ STL-like Containers for Blazing-fast Deserialization
+dumpable - Serialization without any serialization codes in C++
 ========
 
 What is it?
@@ -86,17 +86,26 @@ Extracted from **simple\_example** (test.cpp)
       
 See **simple\_example** from test.cpp for more detail.
 
+When to use? (or Why do I develop this library?)
+------------------------------------------------
+
+I'm working at a video game company, so I want to optimize the loading speed of the game. **dumpable** eliminates time for reconstructing game data from binary to C++ struct.
+
+It can also be used for serializing network packets. While `protobuf` is a very good tool for it, **dumpable** supports nested C++ structs.
+
 Thready Safety
 --------------
 
-Only one thread can call **dumpable::write**. (It uses global variable.)  
+Currently only one thread can call **dumpable::write**. (It uses global variable. It can be change to thread_local.)  
 **dumpable::from\_dumped\_buffer** is thread-safe.
 
 Limitation
 ----------
 
 You cannot use **dumpable** with struct having virtual functions.  
-Modifying **dumpable** containers is slow.
+Modifying **dumpable** containers could be slow.  
+Versioning and error detection are not supported;  
+Calling **dumpable::from_dumped_buffer\<T\>** with a buffer created by an object of type **U** may crash the program.  
 
 Currently only few member functions are implemented. 
 
