@@ -300,14 +300,23 @@ TEST(map)
     original.insert(make_pair(5, "five"));
 
     dmap<int, dstring> data2(original);
-    dmap<int, dstring> data = std::move(data2);
+    dmap<int, dstring> data(std::move(data2));
+    dmap<int, dstring> data3(data);
 
+    ASSERT_EQUAL(true, data2.empty());
     ASSERT_EQUAL(0, data2.size());
     ASSERT_EQUAL(0, data2.count(1));
 
+    ASSERT_EQUAL(3, data.size());
     ASSERT_EQUAL("one", data.find(1)->second);
     ASSERT_EQUAL("two", data.find(2)->second);
     ASSERT_EQUAL("five", data.find(5)->second);
+
+    ASSERT_EQUAL(false, data3.empty());
+    ASSERT_EQUAL(3, data3.size());
+    ASSERT_EQUAL("one", data3.find(1)->second);
+    ASSERT_EQUAL("two", data3.find(2)->second);
+    ASSERT_EQUAL("five", data3.find(5)->second);
 
     ASSERT_EQUAL(0, data.count(3));
     ASSERT_EQUAL(1, data.count(1));
@@ -336,6 +345,15 @@ TEST(map)
         ASSERT_EQUAL(0, data.count(3));
         ASSERT_EQUAL(1, data.count(1));
         ASSERT_EQUAL(3, data.size());
+
+        dmap<int, dstring> data2(data);
+        ASSERT_EQUAL(3, data2.size());
+        dmap<int, dstring> data3;
+        ASSERT_EQUAL(3, data2.size());
+        data3 = std::move(data2);
+        ASSERT_EQUAL(0, data2.size());
+        ASSERT_EQUAL(3, data3.size());
+        ASSERT_EQUAL(true, data3.value_comp()(*data3.find(1), *data3.find(2)));
     }
 
 }
