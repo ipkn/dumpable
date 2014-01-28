@@ -1,19 +1,19 @@
-Dumpable - C++ memcpy-able containers
+dumpable - C++ STL-like Containers for Blazing-fast Deserialization
 ========
 
 What is it?
 -----------
-**Dumpable** is a set of containers that can be reconstructed from buffer in constant time.  
-It can be used in combination with POD types and structures.  
-You don't need to write serialization code for your struct; it just works magically!
 
-Supported containers:
+With **dumpable**, you could..
 
-  - **dstring**
-  - **dvector**
-  - **dmap**
+  * serialize your custom *dumpable* struct
+  * deserialize in constant time
+  * without extra code for serialize/deserialize
 
-These containers can be used like STL containers.
+*dumpable* struct is a struct that contains only members with following types: 
+  * POD
+  * **dstring**, **dvector**, **dmap**
+  * another *dumpable* struct
 
 Example
 -------
@@ -38,7 +38,7 @@ Extracted from **simple\_example** (test.cpp)
       dvector<student> students;
     };
     ```
-  2. Fill data and dump to stream.
+  2. Fill data and dump to a file.
 
     ```cpp
     // building sample data
@@ -50,30 +50,40 @@ Extracted from **simple\_example** (test.cpp)
     data.students.push_back(student(L"\ud55c\uae00",13));
     
     // dump to file
-    ofstream out("dumped.bin");
+    ostringstream out;
     dumpable::write(data, out);
     
+    FILE* fp = fopen("dumped.bin", "wb");
+    size_t buffer_size = out.str().size();
+    fwrite(&buffer_size, 1, sizeof(buffer_size), fp);
+    fwrite(out.str().data(), buffer_size, 1, fp);
+    fclose(fp);
+
     // Wait, where's serialization code?
     // You don't need it with dumpable!
     ```
-    Or you can use ostringstream and do additional tasks like compression, encryption, adding meta informations and so on.
+    Or you can do additional tasks like compression, encryption, adding meta informations and so on.
 
-  3. Read from stream and reconstruct original data.
+  3. Read from the file and reconstruct original data.
   
-      ```cpp
-      ifstream in("dumped.bin");
-      string chunk(istreambuf_iterator(in), istreambuf_iterator());
-      const classroom* pClassRoom = dumpable::from_dumped_buffer<const classroom>(chunk.data());
+    ```cpp
 
-      // pClassRoom is valid; Play with pClassRoom.
+    FILE* fp = fopen("dumped.bin","rb");
+    fread(&buffer_size, 1, sizeof(buffer_size), fp);
+    char* buffer = new char[buffer_size];
+    fread(buffer, buffer_size, 1, fp);
+
+    const classroom* pClassRoom = dumpable::from_dumped_buffer<classroom>(buffer);
+
+    // pClassRoom is valid; Play with pClassRoom.
+    
+    ...
       
-      ...
-      
-      // if we clear chunk ...
-      chunk.clear();
-      // now pClassRom is now invalid.
-      ```
-      Note: **dumpable::from\_dumped\_buffer** takes constant time.
+    // if we clear chunk ...
+    delete[] buffer;
+    // now pClassRom is now invalid.
+    ```
+    Note: **dumpable::from\_dumped\_buffer** takes constant time.
       
 See **simple\_example** from test.cpp for more detail.
 
@@ -86,7 +96,7 @@ Only one thread can call **dumpable::write**. (It uses global variable.)
 Limitation
 ----------
 
-You cannot use **dumpable** with virtual functions.  
+You cannot use **dumpable** with struct having virtual functions.  
 Modifying **dumpable** containers is slow.
 
 Currently only few member functions are implemented. 
