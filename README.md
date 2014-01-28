@@ -9,9 +9,9 @@ You don't need to write serialization code for your struct; it just works magica
 
 Supported containers:
 
-  - **string**
-  - **vector**
-  - **map**
+  - **dstring**
+  - **dvector**
+  - **dmap**
 
 These containers can be used like STL containers.
 
