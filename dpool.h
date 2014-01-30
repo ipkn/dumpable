@@ -13,7 +13,7 @@ namespace dumpable
     class dpool
     {
         public:
-            dpool(void* startAddress, size_t size)
+            dpool(void* startAddress, dumpable::size_t size)
                 : poolSize_(size)
             {
                 poolOffsets_.insert(std::make_pair(startAddress, 0));
@@ -27,7 +27,7 @@ namespace dumpable
                 }
             }
 
-            std::pair<void*, std::ptrdiff_t> alloc(void* self, size_t size)
+            std::pair<void*, dumpable::ptrdiff_t> alloc(void* self, dumpable::size_t size)
             {
                 if (!size)
                     return std::make_pair(nullptr, 0);
@@ -37,12 +37,12 @@ namespace dumpable
                 poolSize_ += size;
                 auto it = poolOffsets_.upper_bound(self);
                 --it;
-                std::ptrdiff_t diff = (char*)self - (char*)it->first;
+                dumpable::ptrdiff_t diff = (char*)self - (char*)it->first;
                 return std::make_pair(allocatedAddress, poolSize_-size-it->second-diff);
             }
         private:
             std::vector<std::vector<char>> pool_;
-            std::ptrdiff_t poolSize_;
-            std::map<void*, std::ptrdiff_t> poolOffsets_;
+            dumpable::ptrdiff_t poolSize_;
+            std::map<void*, dumpable::ptrdiff_t> poolOffsets_;
     };
 }

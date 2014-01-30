@@ -36,8 +36,8 @@ namespace dumpable
     {
         public:
             typedef T value_type;
-            typedef size_t size_type;
-            typedef std::ptrdiff_t difference_type;
+            typedef dumpable::size_t size_type;
+            typedef dumpable::ptrdiff_t difference_type;
             typedef T& reference;
             typedef const T& const_reference;
         protected:

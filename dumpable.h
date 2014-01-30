@@ -3,13 +3,10 @@
 
 #pragma once
 
-#if defined(_MSC_VER) && !defined(noexcept)
-#define noexcept throw()
-#endif
-
 #include <iostream> 
 #include <cstddef>
 
+#include "dumpableconf.h"
 #include "dptr.h"
 #include "dpool.h"
 #include "dvector.h"
@@ -35,7 +32,7 @@ namespace dumpable
     {
         T x;
         dpool local_pool(&x, sizeof(T));
-        dumpable::detail::dptr_alloc = [&local_pool](void* self, size_t size)->std::pair<void*, std::ptrdiff_t>{
+        dumpable::detail::dptr_alloc = [&local_pool](void* self, dumpable::size_t size)->std::pair<void*, dumpable::ptrdiff_t>{
                 return local_pool.alloc(self, size);
             };
         x = data;

@@ -14,7 +14,7 @@ namespace dumpable
     class dbasic_string : protected dptr<T>
     {
         protected:
-            void assign(const T* begin, size_t size)
+            void assign(const T* begin, dumpable::size_t size)
             {
                 if (dumpable::detail::dptr_alloc)
                 {
@@ -35,7 +35,7 @@ namespace dumpable
             explicit dbasic_string() {}
             dbasic_string(const T* str)
             {
-                size_t length = Traits::length(str);
+                dumpable::size_t length = Traits::length(str);
                 assign(str, length);
             }
             dbasic_string(const std::basic_string<T, Traits>& s)
@@ -84,7 +84,7 @@ namespace dumpable
             }
 
             T& operator[](int index) const noexcept { return *(begin() + index); }
-            size_t size() const noexcept { return size_; }
+            dumpable::size_t size() const noexcept { return size_; }
             bool empty() const noexcept { return !size_; }
             T& front() const noexcept { return *begin(); }
             T& back() const noexcept { return *(end()-1); }
@@ -95,7 +95,7 @@ namespace dumpable
             dbasic_string<T, Traits>& operator = (const T* str)
             {
                 clear();
-                size_t length = Traits::length(str);
+                dumpable::size_t length = Traits::length(str);
                 assign(str, length);
 		return *this;
             }
@@ -130,7 +130,7 @@ namespace dumpable
                 return *this;
             }
         private:
-            size_t size_;
+            dumpable::size_t size_;
             char isPooled_;
 
     };
@@ -141,7 +141,7 @@ namespace dumpable
     template <typename T, typename Traits>
     inline bool operator == (const dbasic_string<T, Traits>& a, const T* b)
     {
-        size_t length = Traits::length(b);
+        dumpable::size_t length = Traits::length(b);
         if (length != a.size())
             return false;
         return !Traits::compare(b, a.c_str(), a.size()+1);
@@ -150,7 +150,7 @@ namespace dumpable
     template <typename T, typename Traits>
     inline bool operator == (const T* a, const dbasic_string<T, Traits>& b)
     {
-        size_t length = Traits::length(a);
+        dumpable::size_t length = Traits::length(a);
         if (length != b.size())
             return false;
         return !Traits::compare(a, b.c_str(), b.size()+1);

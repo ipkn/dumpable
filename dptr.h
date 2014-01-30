@@ -3,9 +3,7 @@
 
 #pragma once
 
-#if defined(_MSC_VER) && !defined(noexcept)
-#define noexcept throw()
-#endif
+#include "dumpableconf.h"
 
 #include <cstddef>
 #include <functional>
@@ -14,19 +12,19 @@ namespace dumpable
 {
     namespace detail
     {
-        std::function<std::pair<void*, std::ptrdiff_t>(void* self, size_t size)> dptr_alloc;
+        std::function<std::pair<void*, dumpable::ptrdiff_t>(void* self, dumpable::size_t size)> dptr_alloc;
     }
 
     template <typename T>
     class dptr
     {
         private:
-            std::ptrdiff_t diff_;
+            dumpable::ptrdiff_t diff_;
         protected:
-            void* alloc_internal(size_t size)
+            void* alloc_internal(dumpable::size_t size)
             {
                 void* ret;
-                std::ptrdiff_t offset;
+                dumpable::ptrdiff_t offset;
                 std::tie(ret, offset) = detail::dptr_alloc(this, size);
                 diff_ = offset;
                 return ret;

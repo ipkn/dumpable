@@ -34,12 +34,13 @@ namespace dumpable
             {
                 items_.clear();
             }
-            size_t size() const { return items_.size(); }
-            bool empty() const { return items_.empty(); }
-
             typedef K key_type;
             typedef V mapped_type;
             typedef std::pair<K, V> value_type;
+            typedef typename dvector<value_type>::size_type size_type;
+            size_type size() const { return items_.size(); }
+            bool empty() const { return items_.empty(); }
+
             typedef Compare key_compare;
             class value_compare {
                     friend class dmap;
@@ -98,11 +99,11 @@ namespace dumpable
                     return it;
                 return end();
             }
-            size_t count(const K& key) const noexcept
+            dumpable::size_t count(const K& key) const noexcept
             {
                 return find(key) == end() ? 0 : 1;
             }
         private:
-            dvector<std::pair<K, V>> items_;
+            dvector<value_type> items_;
     };
 }
