@@ -12,9 +12,12 @@ using namespace dumpable;
 string currentTestName;
 vector<pair<string,function<void()>>> allTests;
 
-template class dvector<int>;
-template class dmap<int, int>;
-template class dbasic_string<char>;
+namespace dumpable 
+{
+	template class dvector<int>;
+	template class dmap<int, int>;
+	template class dbasic_string<char>;
+}
 
 bool failed = false;
 
