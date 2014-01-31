@@ -7,7 +7,7 @@ What is it?
 With **dumpable**, you could..
 
   * serialize your custom *dumpable* struct **without any extra code** for serialize/deserialize
-  * deserialize in **constant time**
+  * deserialize in **constant time** (just casting to T*)
 
 *dumpable* struct is a struct that contains only members with following types: 
   * POD
