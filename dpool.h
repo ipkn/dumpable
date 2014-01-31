@@ -31,6 +31,9 @@ namespace dumpable
             {
                 if (!size)
                     return std::make_pair(nullptr, 0);
+#ifdef DUMPABLE_ALIGNED_POOL
+                size = (size+(sizeof(size_t)-1))/sizeof(size_t)*sizeof(size_t);
+#endif
                 pool_.push_back(std::vector<char>(size));
                 void* allocatedAddress = &pool_.back()[0];
                 poolOffsets_.insert(std::make_pair(allocatedAddress, poolSize_));

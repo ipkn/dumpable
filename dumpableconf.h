@@ -7,6 +7,8 @@
 // If DUMPABLE_COMPATIBLE_LAYOUT is defined, the result binary is slightly larger.
 //#define DUMPABLE_COMPATIBLE_LAYOUT
 
+#define DUMPABLE_ALIGNED_POOL
+
 #if defined(_MSC_VER) && !defined(noexcept)
 #define noexcept throw()
 #endif
