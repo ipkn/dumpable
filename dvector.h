@@ -55,6 +55,11 @@ namespace dumpable
         protected:
             void assign(const T* begin, size_type size)
             {
+                if (!size)
+                {
+                    clear();
+                    return;
+                }
                 if (dumpable::detail::dptr_alloc())
                 {
                     isPooled_ = true;
@@ -160,7 +165,7 @@ namespace dumpable
             T& front() { return *begin(); }
             T& back() { return *(end()-1); }
 
-            void reserve()
+            void reserve(size_type)
             {
                 // do nothing
             }

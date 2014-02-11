@@ -13,12 +13,12 @@ namespace dumpable
 {
     namespace detail
     {
-        std::function<std::pair<void*, dumpable::ptrdiff_t>(void* self, dumpable::size_t size)>& dptr_alloc()
+        inline std::function<std::pair<void*, dumpable::ptrdiff_t>(void* self, dumpable::size_t size)>& dptr_alloc()
         { 
             static std::function<std::pair<void*, dumpable::ptrdiff_t>(void* self, dumpable::size_t size)> allocFunc;
             return allocFunc;
         }
-        bool dumpable_is_custom_alloc()
+        inline bool dumpable_is_custom_alloc()
         {
             return !!dptr_alloc();
         }

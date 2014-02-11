@@ -234,6 +234,33 @@ TEST(vector)
     ASSERT_EQUAL(0, v3[4]);
 }
 
+TEST(empty_encoding)
+{
+    struct A
+    {
+        int a;
+        dstring b;
+        int c;
+        dvector<int> d;
+        int e;
+    };
+
+    A data;
+    data.a = 1;
+    data.c = 3;
+    data.e = 5;
+
+    ostringstream os;
+    dumpable::write(data, os);
+
+    string buffer = os.str();
+    A* stored = (A*)buffer.data();
+
+    ASSERT_EQUAL(1, stored->a);
+    ASSERT_EQUAL(3, stored->c);
+    ASSERT_EQUAL(5, stored->e);
+}
+
 TEST(string)
 {
     dstring dumpable_empty("");

@@ -16,6 +16,11 @@ namespace dumpable
         protected:
             void assign(const T* begin, dumpable::size_t size)
             {
+                if (!size)
+                {
+                    clear();
+                    return;
+                }
                 if (dumpable::detail::dptr_alloc())
                 {
                     isPooled_ = true;
@@ -32,7 +37,7 @@ namespace dumpable
                 }
             }
         public:
-            explicit dbasic_string() {}
+            explicit dbasic_string() : size_(0), isPooled_(false) {}
             dbasic_string(const T* str)
             {
                 dumpable::size_t length = Traits::length(str);
