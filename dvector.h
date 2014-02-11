@@ -43,7 +43,7 @@ namespace dumpable
         protected:
             void assign(const T* begin, size_type size)
             {
-                if (dumpable::detail::dptr_alloc)
+                if (dumpable::detail::dptr_alloc())
                 {
                     isPooled_ = true;
                     size_ = size;
@@ -62,7 +62,7 @@ namespace dumpable
 
             void uninitialized_resize(size_type newSize)
             {
-                assert(!dumpable::detail::dptr_alloc);
+                assert(!dumpable::detail::dptr_alloc());
                 size_type oldCapacity = detail::find_power_of_2_greater_than(size());
                 if (isPooled_)
                     oldCapacity = size_;

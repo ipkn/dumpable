@@ -361,6 +361,35 @@ TEST(map)
 
 }
 
+TEST(not_dump)
+{
+    struct example
+    {
+        int a;
+        not_dump<string> b;
+        dstring c; 
+        not_dump<shared_ptr<int>> p;
+    };
+    example data;
+    data.a = 3;
+    data.b = "hello";
+    data.b += "there";
+    data.c = "world";
+    data.p = make_shared<int>(10);
+
+    ASSERT_EQUAL("hellothere", data.b);
+    ASSERT_EQUAL(10, *data.p);
+
+    ostringstream os;
+    dumpable::write(data, os);
+
+    example* stored = (example*)os.str().c_str();
+    ASSERT_EQUAL(3, stored->a);
+    ASSERT_EQUAL("world", stored->c);
+    ASSERT_EQUAL("", stored->b);
+    ASSERT_EQUAL(true, !stored->p);
+}
+
 TEST(basic_implementation)
 {
     struct embedded_empty

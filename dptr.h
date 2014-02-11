@@ -12,7 +12,15 @@ namespace dumpable
 {
     namespace detail
     {
-        std::function<std::pair<void*, dumpable::ptrdiff_t>(void* self, dumpable::size_t size)> dptr_alloc;
+        std::function<std::pair<void*, dumpable::ptrdiff_t>(void* self, dumpable::size_t size)>& dptr_alloc()
+        { 
+            static std::function<std::pair<void*, dumpable::ptrdiff_t>(void* self, dumpable::size_t size)> allocFunc;
+            return allocFunc;
+        }
+        bool dumpable_is_custom_alloc()
+        {
+            return !!dptr_alloc();
+        }
     }
 
     template <typename T>
@@ -25,7 +33,7 @@ namespace dumpable
             {
                 void* ret;
                 dumpable::ptrdiff_t offset;
-                std::tie(ret, offset) = detail::dptr_alloc(this, size);
+                std::tie(ret, offset) = detail::dptr_alloc()(this, size);
                 diff_ = offset;
                 return ret;
             }
@@ -58,7 +66,7 @@ namespace dumpable
             {
                 if (x == nullptr)
                     diff_ = 0;
-                else if (detail::dptr_alloc)
+                else if (detail::dptr_alloc())
                 {
                     void* ret = alloc_internal(sizeof(T));
                     *(T*)ret = *x;

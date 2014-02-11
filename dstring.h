@@ -16,7 +16,7 @@ namespace dumpable
         protected:
             void assign(const T* begin, dumpable::size_t size)
             {
-                if (dumpable::detail::dptr_alloc)
+                if (dumpable::detail::dptr_alloc())
                 {
                     isPooled_ = true;
                     size_ = size;

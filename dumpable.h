@@ -12,6 +12,7 @@
 #include "dvector.h"
 #include "dstring.h"
 #include "dmap.h"
+#include "dutility.h"
 
 namespace dumpable
 {
@@ -32,12 +33,12 @@ namespace dumpable
     {
         T x;
         dpool local_pool(&x, sizeof(T));
-        dumpable::detail::dptr_alloc = [&local_pool](void* self, dumpable::size_t size)->std::pair<void*, dumpable::ptrdiff_t>{
+        dumpable::detail::dptr_alloc() = [&local_pool](void* self, dumpable::size_t size)->std::pair<void*, dumpable::ptrdiff_t>{
                 return local_pool.alloc(self, size);
             };
         x = data;
         os.write((const char*)&x, sizeof(x));
         local_pool.write(os);
-        dumpable::detail::dptr_alloc = nullptr;
+        dumpable::detail::dptr_alloc() = nullptr;
     }
 }
