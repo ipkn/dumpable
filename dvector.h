@@ -11,6 +11,19 @@ namespace dumpable
 {
     namespace detail
     {
+        template <bool Cond, typename T>
+        struct do_shift
+        {
+            void operator()(T& v, int shift) const{}
+        };
+        template <typename T>
+        struct do_shift<true, T>
+        {
+            void operator()(T& v, int shift) const
+            {
+                v |= v >> shift;
+            }
+        };
         template <typename T>
         T find_power_of_2_greater_than(T n)
         {
@@ -23,8 +36,7 @@ namespace dumpable
             n|=n>>4;
             n|=n>>8;
             n|=n>>16;
-            if (sizeof(T) > 4)
-                n|=n>>32;
+            do_shift<(sizeof(T)>4),T>()(n, 32);
             n++;
             if (n < 8)
                 return 8;

@@ -383,7 +383,8 @@ TEST(not_dump)
     ostringstream os;
     dumpable::write(data, os);
 
-    example* stored = (example*)os.str().c_str();
+    string buffer = os.str();
+    example* stored = (example*)buffer.c_str();
     ASSERT_EQUAL(3, stored->a);
     ASSERT_EQUAL("world", stored->c);
     ASSERT_EQUAL("", stored->b);

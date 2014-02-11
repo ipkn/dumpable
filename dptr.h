@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <functional>
+#include <tuple>
 
 namespace dumpable
 {
@@ -39,9 +40,13 @@ namespace dumpable
             }
         public:
             dptr() : diff_(0) {}
-            dptr(const dptr<T>& rhs) : diff_((char*)&*rhs - (char*)this) {}
-            dptr(dptr<T>&& rhs) noexcept : diff_((char*)&*rhs - (char*)this) 
+            dptr(const dptr<T>& rhs) 
             {
+                diff_ = (char*)&*rhs - (char*)this; 
+            }
+            dptr(dptr<T>&& rhs) noexcept 
+            {
+                diff_ = (char*)&*rhs - (char*)this;
                 rhs = nullptr;
             }
             T& operator* () const noexcept
